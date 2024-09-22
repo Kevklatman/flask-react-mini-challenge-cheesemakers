@@ -79,12 +79,14 @@ class Cheese(db.Model, SerializerMixin):
     @validates
     def validate_production_date(self, key, production_date):
         if not production_date <= datetime.now():
-            raise ValueError(f"Production date must be before {datetime.now()}")
+            raise ValueError(f"Production date must be before {datetime.now()}.")
         return production_date
 
     @validates
     def validate_price(self, key, price):
-        pass
+        if not 1.00 <= price <= 45.00:
+            raise ValueError(f"Price must be between 1.00 and 45.00.")
+        return price
 
     # add the relationship
     producer = db.relationship('Producer', back_populates='cheeses')
