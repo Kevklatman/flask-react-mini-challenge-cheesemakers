@@ -27,6 +27,32 @@ def index():
     response = make_response({"message": "Hello Fromagers!"}, 200)
     return response
 
+@app.route("/producers")
+def producers():
+    producers = [producer.to_dict() for producer in Producer.query.all()]
+
+    response = make_response(
+        producers,
+        200,
+        {"Content-Type": "application/json"}
+    )
+    return jsonify(response)
+
+@app.route('/producers/<int:id>')
+def producer_by_id(id):
+    producer = Producer.query.filter(Producer.id == id).first()
+
+    producer_dict = producer.to_dict()
+
+    response = make_response(
+        producer_dict,
+        200
+    )
+    return response
+
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
+
+#Routes 
+#1. GET/ producers

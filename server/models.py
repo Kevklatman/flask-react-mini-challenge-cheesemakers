@@ -25,6 +25,8 @@ db = SQLAlchemy(metadata=metadata, engine_options={"echo": True})
 class Producer(db.Model, SerializerMixin):
     __tablename__ = "producers"
 
+    serialize_rules = ('-cheeses.producer',)
+
     id = db.Column(db.Integer, primary_key=True)
     #adding columns
     founding_year = db.Column(db.Integer, nullable=False)
@@ -64,6 +66,8 @@ class Producer(db.Model, SerializerMixin):
 
 class Cheese(db.Model, SerializerMixin):
     __tablename__ = "cheeses"
+
+    serialize_rules = ('-producer',)
 
     id = db.Column(db.Integer, primary_key=True)
     #adding columns
