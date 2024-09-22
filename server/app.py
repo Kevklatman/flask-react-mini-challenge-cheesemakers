@@ -2,6 +2,7 @@ from flask import Flask, jsonify, make_response, request
 from flask_cors import CORS
 from flask_migrate import Migrate
 from models import Cheese, Producer, db
+from datetime import datetime
 
 # from flask_restful import Api, Resource
 
@@ -151,10 +152,23 @@ def update_cheese(id):
         db.session.rollback()
         return make_response(jsonify({"errors": ["validation errors"]}), 400)
 
+@app.route('/cheeses/<int:id>', methods=['DELETE'])
+def delete_cheese(id):
+    cheese = Cheese.query.get(id)
+    
+    if not cheese:
+        return make_response(jsonify({"error": "Resource not found"}), 404)
+    
+    try:
+        db.session.delete(cheese)
+        db.session.commit()
+        
+        return '', 204
+    
+    except Exception as e:
+        db.session.rollback()
+        return make_response(jsonify({"error": str(e)}), 500)
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
 
-#Routes 
-#1. GET/ producers
-#2. 
