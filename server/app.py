@@ -66,6 +66,49 @@ def producer_by_id(id):
         except Exception as e:
             db.session.rollback()
             return make_response(jsonify({"error": str(e)}), 500)
+#post cheeses       
+@app.route('/cheeses', methods=['POST'])
+def create_cheese():
+    data = request.json
+
+    if not all(key in data for key in ['kind', 'is_raw_milk', 'production_date', 'image', 'price', 'producer_id']):
+        return make_response(jsonify({"errors": ["validation errors"]}), 400)
+
+    producer = Producer.query.get(data['producer_id'])
+    if not producer:
+        return make_response(jsonify({"errors": ["validation errors"]}), 400)
+
+    try:
+        new_cheese = Cheese(
+            kind=data['kind'],
+            is_raw_milk=data['is_raw_milk'],
+            production_date=datetime.strptime(data['production_date'], "%Y-%m-%d"),
+            image=data['image'],
+            price=float(data['price']),
+            producer_id=data['producer_id']
+        )
+
+        db.session.add(new_cheese)
+        db.session.commit()
+
+        response_data = {
+            "id": new_cheese.id,
+            "image": new_cheese.image,
+            "is_raw_milk": new_cheese.is_raw_milk,
+            "kind": new_cheese.kind,
+            "price": new_cheese.price,
+            "producer": {
+                "name": producer.name
+            },
+            "producer_id": new_cheese.producer_id,
+            "production_date": new_cheese.production_date.strftime("%Y-%m-%d %H:%M:%S")
+        }
+
+        return make_response(jsonify(response_data), 201)
+
+    except Exception as e:
+        db.session.rollback()
+        return make_response(jsonify({"errors": ["validation errors"]}), 400)
 
 
 if __name__ == "__main__":
