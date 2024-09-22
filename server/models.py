@@ -78,7 +78,9 @@ class Cheese(db.Model, SerializerMixin):
     #add cheese validations
     @validates
     def validate_production_date(self, key, production_date):
-        pass
+        if not production_date <= datetime.now():
+            raise ValueError(f"Production date must be before {datetime.now()}")
+        return production_date
 
     @validates
     def validate_price(self, key, price):
