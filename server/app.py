@@ -39,20 +39,33 @@ def producers():
     )
     return response
 
-@app.route('/producers/<int:id>')
+@app.route('/producers/<int:id>', methods=['GET', 'DELETE'])
 def producer_by_id(id):
     producer = Producer.query.filter(Producer.id == id).first()
 
     if not producer:
-        return make_response(jsonify({"error": "Producer not found"}), 404)
+        return make_response(jsonify({"error": "Resource not found"}), 404)
 
-    producer_dict = producer.to_dict_with_cheeses()
+    if request.method == 'GET':
+        producer_dict = producer.to_dict_with_cheeses()
+        response = make_response(
+            jsonify(producer_dict),
+            200
+        )
+        return response
 
-    response = make_response(
-        jsonify(producer_dict),
-        200
-    )
-    return response
+    elif request.method == 'DELETE':
+        try:
+            Cheese.query.filter_by(producer_id=id).delete()
+            
+            db.session.delete(producer)
+            db.session.commit()
+
+            return '', 204
+
+        except Exception as e:
+            db.session.rollback()
+            return make_response(jsonify({"error": str(e)}), 500)
 
 
 if __name__ == "__main__":
