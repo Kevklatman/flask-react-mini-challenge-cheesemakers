@@ -109,6 +109,47 @@ def create_cheese():
     except Exception as e:
         db.session.rollback()
         return make_response(jsonify({"errors": ["validation errors"]}), 400)
+    
+
+@app.route('/cheeses/<int:id>', methods=['PATCH'])
+def update_cheese(id):
+    cheese = Cheese.query.get(id)
+    if not cheese:
+        return make_response(jsonify({"errors": ["Cheese not found"]}), 404)
+
+    data = request.json
+
+    try:
+        if 'is_raw_milk' in data:
+            cheese.is_raw_milk = data['is_raw_milk']
+        if 'production_date' in data:
+            cheese.production_date = datetime.strptime(data['production_date'], "%Y-%m-%d")
+        if 'kind' in data:
+            cheese.kind = data['kind']
+        if 'image' in data:
+            cheese.image = data['image']
+        if 'price' in data:
+            cheese.price = float(data['price'])
+        if 'producer_id' in data:
+            cheese.producer_id = data['producer_id']
+
+        db.session.commit()
+
+        response_data = {
+            "id": cheese.id,
+            "image": cheese.image,
+            "is_raw_milk": cheese.is_raw_milk,
+            "kind": cheese.kind,
+            "price": cheese.price,
+            "producer_id": cheese.producer_id,
+            "production_date": cheese.production_date.strftime("%Y-%m-%d %H:%M:%S")
+        }
+
+        return make_response(jsonify(response_data), 200)
+
+    except Exception as e:
+        db.session.rollback()
+        return make_response(jsonify({"errors": ["validation errors"]}), 400)
 
 
 if __name__ == "__main__":
