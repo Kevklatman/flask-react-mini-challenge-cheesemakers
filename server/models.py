@@ -68,12 +68,21 @@ class Cheese(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     #adding columns
     #cheese gets foreign key because it's on the many side
-    producer_id = (db.Integer, db.ForeignKey('producers.id'))
-    kind = (db.String)
-    is_raw_milk = (db.Boolean)
-    production_date = (db.DateTime)
-    image = (db.String)
-    price = (db.Float)
+    producer_id = db.Column(db.Integer, db.ForeignKey('producers.id'))
+    kind = db.Column(db.String)
+    is_raw_milk = db.Column(db.Boolean)
+    production_date = db.Column(db.DateTime, nullable=False)
+    image = db.Column(db.String)
+    price = db.Column(db.Float, nullable=False)
+
+    #add cheese validations
+    @validates
+    def validate_production_date(self, key, production_date):
+        pass
+
+    @validates
+    def validate_price(self, key, price):
+        pass
 
     # add the relationship
     producer = db.relationship('Producer', back_populates='cheeses')
