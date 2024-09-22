@@ -29,18 +29,22 @@ def index():
 
 @app.route("/producers")
 def producers():
-    producers = [producer.to_dict() for producer in Producer.query.all()]
+    producers = Producer.query.all()
+    producers_list = [producer.to_dict() for producer in producers]
 
     response = make_response(
-        producers,
+        jsonify(producers_list),
         200,
         {"Content-Type": "application/json"}
     )
-    return jsonify(response)
+    return response
 
 @app.route('/producers/<int:id>')
 def producer_by_id(id):
     producer = Producer.query.filter(Producer.id == id).first()
+
+    if not producer:
+        return make_response(jsonify({"error": "Producer not found"}), 404)
 
     producer_dict = producer.to_dict()
 
