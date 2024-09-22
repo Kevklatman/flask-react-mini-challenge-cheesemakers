@@ -59,6 +59,29 @@ class Producer(db.Model, SerializerMixin):
 
     # adding the relationship
     cheeses = db.relationship('Cheese', back_populates='producer')
+    #serialization rules change
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "founding_year": self.founding_year,
+            "name": self.name,
+            "region": self.region,
+            "operation_size": self.operation_size,
+            "image": self.image
+        }
+
+    def to_dict_with_cheeses(self):
+        return {
+            "cheeses": [cheese.to_dict() for cheese in self.cheeses],
+            "founding_year": self.founding_year,
+            "id": self.id,
+            "image": self.image,
+            "name": self.name,
+            "operation_size": self.operation_size,
+            "region": self.region
+        }
+
+
 
     def __repr__(self):
         return f"<Producer {self.id}>"
@@ -95,6 +118,16 @@ class Cheese(db.Model, SerializerMixin):
     # add the relationship
     producer = db.relationship('Producer', back_populates='cheeses')
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "image": self.image,
+            "is_raw_milk": self.is_raw_milk,
+            "kind": self.kind,
+            "price": self.price,
+            "producer_id": self.producer_id,
+            "production_date": self.production_date.strftime("%Y-%m-%d %H:%M:%S")
+        }
 
     def __repr__(self):
         return f"<Cheese {self.id}>"

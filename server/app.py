@@ -26,6 +26,7 @@ db.init_app(app)
 def index():
     response = make_response({"message": "Hello Fromagers!"}, 200)
     return response
+#producer get routes
 
 @app.route("/producers")
 def producers():
@@ -34,8 +35,7 @@ def producers():
 
     response = make_response(
         jsonify(producers_list),
-        200,
-        {"Content-Type": "application/json"}
+        200
     )
     return response
 
@@ -46,10 +46,10 @@ def producer_by_id(id):
     if not producer:
         return make_response(jsonify({"error": "Producer not found"}), 404)
 
-    producer_dict = producer.to_dict()
+    producer_dict = producer.to_dict_with_cheeses()
 
     response = make_response(
-        producer_dict,
+        jsonify(producer_dict),
         200
     )
     return response
@@ -60,3 +60,4 @@ if __name__ == "__main__":
 
 #Routes 
 #1. GET/ producers
+#2. 
