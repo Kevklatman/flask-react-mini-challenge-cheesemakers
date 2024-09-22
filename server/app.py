@@ -168,6 +168,16 @@ def delete_cheese(id):
     except Exception as e:
         db.session.rollback()
         return make_response(jsonify({"error": str(e)}), 500)
+    
+#association proxy route
+@app.route('/producers/<int:id>/cheese_kinds')
+def producer_cheese_kinds(id):
+    producer = Producer.query.get(id)
+    if not producer:
+        return make_response(jsonify({"error": "Producer not found"}), 404)
+    
+    cheese_kinds = list(set(producer.cheese_kinds))
+    return make_response(jsonify({"cheese_kinds": cheese_kinds}), 200)
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)

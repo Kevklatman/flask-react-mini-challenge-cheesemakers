@@ -35,6 +35,8 @@ class Producer(db.Model, SerializerMixin):
     operation_size = db.Column(db.String, nullable = False)
     image = db.Column(db.String)
 
+    
+
     #validations for producers
     @validates('name')
     def validate_name(self, key, name):
@@ -59,6 +61,8 @@ class Producer(db.Model, SerializerMixin):
 
     # adding the relationship
     cheeses = db.relationship('Cheese', back_populates='producer')
+    cheese_kinds = association_proxy('cheeses', 'kind')
+
     #serialization rules change
     def to_dict(self):
         return {
